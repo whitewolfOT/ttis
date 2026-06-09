@@ -9,22 +9,29 @@
 - freight.py — estimate_freight, ORIGIN_LABELS, FREIGHT_FCL, LEAD_DAYS (20 origins)
 - calc.py — calc_landed (full formula, all incoterms, FODEC/TCL flags)
 - search.py — search_hs (rapidfuzz partial_ratio)
-- tests/ — 12 passing (seed fixture, resolver ×6, calc ×3, search ×3)
+- scraper.py — scrape_mfn_full (Playwright + lxml/BS4, checkpoint/resume, _page injection for tests)
+- dashboard.py — build_dashboard() returning six-tab ipywidgets UI; all logic delegated to engine modules
+- tests/ — 18 passing (resolver ×6, calc ×3, search ×3, scraper ×6)
 
 ## What does NOT work yet
-- scraper.py — not extracted from notebook yet (DEFERRED to Sprint 2)
-- dashboard.py — not extracted from notebook yet (DEFERRED to Sprint 2)
 - Preferential logic — FTA exclusions/phase-outs not populated (DEFERRED)
 - CKD tab — uses hardcoded 50% parts-duty assumption (DEFERRED)
 - Saved scenarios — in-memory only, no persistence (DEFERRED)
+- Full scrape not validated against live portal (requires Playwright + Chromium install)
 
 ## Notes from Sprint 1
 - resolver.py ancestor lookup extended to match DB rows that are MORE specific than
   the query code (e.g. query="8541" finds DB row "854140") via LIKE clause.
 
-## Last commit
-feat: extract notebook to ttis/ module structure (Phase 0–2)
+## Notes from Sprint 2
+- scraper.py accepts _page= injection parameter so tests never hit live portal
+- dashboard.py CKD tab is a stub (parts_rate = finished_rate × 0.5); labelled DEFERRED
 
-## Next step to resume (Sprint 2)
-Extract scraper.py from Cell 3, wire to db.upsert_measures, add scraper smoke test
-with max_chapters=1. Then extract dashboard.py from Cell 8.
+## Last commit
+feat: extract scraper and dashboard (Sprint 2)
+
+## Next step to resume (Sprint 3)
+- Validate scraper against live portal (max_chapters=1 manual smoke test)
+- Populate FTA exclusion/phase-out data in agreements.py
+- Implement scenario persistence (SQLite or JSON) for Saved Scenarios tab
+- Expand CKD tab with real BOM-level analysis
