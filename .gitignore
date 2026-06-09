@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+tunisia_trade.db
+data/scrape_checkpoint.json
+*.db
