@@ -1,35 +1,30 @@
-# SESSION_STATE — Tunisia Tariff Intelligence System (TTIS)
+# SESSION_STATE — TTIS
 
-## What works now (pre-Sprint 1 baseline)
-
-All logic exists in a single Jupyter notebook (8 cells). The system is functionally correct
-but not yet structured as importable Python modules. Key capabilities:
-
-- MFN scraper (Playwright + BeautifulSoup, checkpoint/resume) — Cell 3
-- SQLite schema with `tariff_measures`, `agreements`, `agreement_members` — Cell 4/5
-- Fallback dataset: 6 HS codes with realistic MFN duties — Cell 3
-- Deterministic resolver: `enumerate_paths` + `resolve_duty` (SUSP > PREF > QUOTA > MFN) — Cell 6
-- Landed-cost calculator: EXW/FOB/CIF incoterms, FODEC, TCL, VAT — Cell 8
-- Fuzzy product search (rapidfuzz) — Cell 8
-- Jupyter dashboard: Sourcing tab + Legal Paths tab (reduced from original 6-tab spec) — Cell 8
-- 20 origins with density-based freight and lead-time estimates — Cell 8
+## What works now
+- schemas.py — all four dataclasses; importable
+- db.py — get_conn, ensure_schema, upsert_measures, load_hs_index
+- fallback.py — 12 TariffMeasure rows (6 HS × DD+TVA)
+- agreements.py — 4 agreements (EU, Turkey, Agadir, PAFTA), populate_preferential (idempotent)
+- resolver.py — enumerate_paths, resolve_duty, get_hs_ancestors; prefix-in/prefix-out matching
+- freight.py — estimate_freight, ORIGIN_LABELS, FREIGHT_FCL, LEAD_DAYS (20 origins)
+- calc.py — calc_landed (full formula, all incoterms, FODEC/TCL flags)
+- search.py — search_hs (rapidfuzz partial_ratio)
+- tests/ — 12 passing (seed fixture, resolver ×6, calc ×3, search ×3)
 
 ## What does NOT work yet
+- scraper.py — not extracted from notebook yet (DEFERRED to Sprint 2)
+- dashboard.py — not extracted from notebook yet (DEFERRED to Sprint 2)
+- Preferential logic — FTA exclusions/phase-outs not populated (DEFERRED)
+- CKD tab — uses hardcoded 50% parts-duty assumption (DEFERRED)
+- Saved scenarios — in-memory only, no persistence (DEFERRED)
 
-- No `tests/` directory — zero automated tests
-- No module structure — all code in notebook cells, not importable
-- Scraper: only scrapes first 10 chapters (max_chapters=10); full run requires max_chapters=None (~30 min)
-- Preferential logic: 0% duty hardcoded for all HS codes; FTA exclusions/phase-outs not modelled
-- Freight model: linear/density-based; not suitable for precise logistics planning
-- CKD tab: assumes parts duty = 50% of finished duty; no BOM-level analysis
-- Saved scenarios: in-memory only; not persisted to disk
-- Dashboard has only 2 tabs (Sourcing, Legal Paths); full 6-tab spec not yet re-implemented
+## Notes from Sprint 1
+- resolver.py ancestor lookup extended to match DB rows that are MORE specific than
+  the query code (e.g. query="8541" finds DB row "854140") via LIKE clause.
 
 ## Last commit
+feat: extract notebook to ttis/ module structure (Phase 0–2)
 
-None yet — no git repo initialised.
-
-## Next step to resume
-
-**Sprint 1** — Extract notebook cells into `ttis/` module structure per SPRINT_1.md.
-Start with Step 0 pre-flight, then build schemas.py first (no exceptions).
+## Next step to resume (Sprint 2)
+Extract scraper.py from Cell 3, wire to db.upsert_measures, add scraper smoke test
+with max_chapters=1. Then extract dashboard.py from Cell 8.
