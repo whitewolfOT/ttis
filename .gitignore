@@ -6,3 +6,6 @@ __pycache__/
 tunisia_trade.db
 data/scrape_checkpoint.json
 *.db
+output/
+*.pkl
+data/
