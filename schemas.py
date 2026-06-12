@@ -41,6 +41,14 @@ class LandedCost:
     vat_amt: float
     landed: float
     landed_tnd: float
+    freight_min: float = 0.0
+    freight_max: float = 0.0
+    freight_mode: str = "sea_fcl"
+    landed_min: float = 0.0
+    landed_max: float = 0.0
+    working_capital_cost: float = 0.0
+    currency_flag: str = ""
+    supplier_risk: str = ""
 
 
 @dataclass
