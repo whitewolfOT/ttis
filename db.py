@@ -41,6 +41,49 @@ def ensure_schema(conn) -> None:
             country_iso2 TEXT NOT NULL,
             UNIQUE(agreement_name, country_iso2)
         );
+        CREATE TABLE IF NOT EXISTS export_tariffs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            hs6 TEXT,
+            reporter_code TEXT,
+            reporter_name TEXT,
+            reporter_iso2 TEXT,
+            rate REAL,
+            tariff_regime TEXT,
+            agreement_id TEXT,
+            year INTEGER,
+            scraped_at DATE
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_export_tariffs
+            ON export_tariffs(hs6, reporter_code, year);
+        CREATE TABLE IF NOT EXISTS freight_benchmarks (
+            origin_iso2 TEXT,
+            mode TEXT,
+            min_usd REAL,
+            mid_usd REAL,
+            max_usd REAL,
+            transit_days INTEGER,
+            source TEXT,
+            effective_date DATE,
+            confidence TEXT,
+            PRIMARY KEY (origin_iso2, mode)
+        );
+        CREATE TABLE IF NOT EXISTS duty_suspensions (
+            hs_code TEXT PRIMARY KEY,
+            description TEXT,
+            legal_basis TEXT,
+            beneficiary TEXT,
+            notes TEXT
+        );
+        CREATE TABLE IF NOT EXISTS antidumping_measures (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            hs_code TEXT,
+            origin_country TEXT,
+            measure_type TEXT,
+            additional_rate REAL,
+            valid_from DATE,
+            valid_to DATE,
+            legal_reference TEXT
+        );
     """)
     conn.commit()
 
