@@ -9,3 +9,4 @@ data/scrape_checkpoint.json
 output/
 *.pkl
 data/
+.env
